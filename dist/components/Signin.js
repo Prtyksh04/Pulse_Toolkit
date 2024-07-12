@@ -63,6 +63,9 @@ const Signin = ({ redirectPath = '/dashboard' }) => {
                 body: JSON.stringify(payload),
             });
             const result = yield response.json();
+            if (response.status === 401) {
+                setErrorMessage(result.message);
+            }
             if (response.ok) {
                 signIn(result.data.user);
                 navigate(redirectPath);

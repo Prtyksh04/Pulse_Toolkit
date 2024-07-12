@@ -1,6 +1,6 @@
 {
   "name": "pulseauthtoolkit",
-  "version": "3.0.9",
+  "version": "4.0.9",
   "description": "Toolkit for authentication components with Tailwind CSS styles.",
   "main": "dist/index.js",
   "files": [

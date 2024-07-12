@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link , useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
@@ -7,6 +7,10 @@ const Signup: React.FC = () => {
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [isPasswordStrong, setIsPasswordStrong] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [otp, setOtp] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVerifingOtp , setIsVerifingOtp] = useState(false);
   const apiKey = process.env.REACT_APP_DOMAIN_KEY;
   const projectName = process.env.REACT_APP_FORM_TYPE_KEY;
   const navigate = useNavigate();
@@ -44,6 +48,10 @@ const Signup: React.FC = () => {
     }
   };
 
+  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOtp(e.target.value);
+  };
+
   const validatePassword = (password: string) => {
     const errors: string[] = [];
     if (password.length < 8) {
@@ -65,6 +73,7 @@ const Signup: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const payload = {
       ...formData,
@@ -80,12 +89,41 @@ const Signup: React.FC = () => {
         },
         body: JSON.stringify(payload),
       });
-
       const result = await response.json();
-      console.log('Signup successful:', result);
-      navigate("/signin");
+      setIsOtpSent(true);
+      console.log('OTP sent:', result);
     } catch (error) {
       console.error('Signup failed:', error);
+    } finally {
+      setIsSubmitting(false); // Set isSubmitting to false when the request is done
+    }
+  };
+
+  const handleOtpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsVerifingOtp(true);
+
+    const payload = {
+      ...formData,
+      otp,
+      apiKey,
+      projectName
+    };
+
+    try {
+      const response = await fetch('http://localhost:3000/client/Auth/verifyotp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      console.log('OTP verification successful:', result);
+      navigate("/signin");
+    } catch (error) {
+      console.error('OTP verification failed:', error);
     }
   };
 
@@ -100,7 +138,7 @@ const Signup: React.FC = () => {
             <div className="h-10 bg-gray-200 rounded mb-6"></div>
           </div>
         ) : (
-          formType && (
+          formType && !isOtpSent && (
             <form onSubmit={handleSubmit}>
               {formType === 'EMAIL_USERNAME_PASSWORD' && (
                 <div>
@@ -188,13 +226,36 @@ const Signup: React.FC = () => {
               )}
               <button
                 type="submit"
-                disabled={!isPasswordStrong}
-                className={`w-full py-2 px-4 rounded-lg focus:outline-none ${!isPasswordStrong ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
+                disabled={!isPasswordStrong || isSubmitting}
+                className={`w-full py-2 px-4 rounded-lg focus:outline-none ${!isPasswordStrong || isSubmitting ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
               >
-                Signup
+                {isSubmitting ? 'Sending OTP...' : 'Signup'}
               </button>
             </form>
           )
+        )}
+        {isOtpSent && (
+          <form onSubmit={handleOtpSubmit}>
+            <div className="mb-4">
+              <label htmlFor="otp" className="block text-sm font-medium text-gray-700">Enter OTP</label>
+              <input
+                type="text"
+                id="otp"
+                name="otp"
+                value={otp}
+                onChange={handleOtpChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled = {isVerifingOtp}
+              className={`w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg focus:outline-none  ${isVerifingOtp ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
+            >
+              {isVerifingOtp ? "Verifing OTP..." : "Verify"}
+            </button>
+          </form>
         )}
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account? <Link to="/signin" className="text-indigo-600 hover:underline">Signin</Link>

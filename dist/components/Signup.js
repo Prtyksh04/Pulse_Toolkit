@@ -18,6 +18,9 @@ const Signup = () => {
     const [passwordErrors, setPasswordErrors] = (0, react_1.useState)([]);
     const [isPasswordStrong, setIsPasswordStrong] = (0, react_1.useState)(false);
     const [isLoading, setIsLoading] = (0, react_1.useState)(true);
+    const [otp, setOtp] = (0, react_1.useState)('');
+    const [isOtpSent, setIsOtpSent] = (0, react_1.useState)(false);
+    const [isSubmitting, setIsSubmitting] = (0, react_1.useState)(false);
     const apiKey = process.env.REACT_APP_DOMAIN_KEY;
     const projectName = process.env.REACT_APP_FORM_TYPE_KEY;
     const navigate = (0, react_router_dom_1.useNavigate)();
@@ -50,6 +53,9 @@ const Signup = () => {
             validatePassword(e.target.value);
         }
     };
+    const handleOtpChange = (e) => {
+        setOtp(e.target.value);
+    };
     const validatePassword = (password) => {
         const errors = [];
         if (password.length < 8) {
@@ -70,6 +76,7 @@ const Signup = () => {
     };
     const handleSubmit = (e) => __awaiter(void 0, void 0, void 0, function* () {
         e.preventDefault();
+        setIsSubmitting(true); // Set isSubmitting to true when the form is submitted
         const payload = Object.assign(Object.assign({}, formData), { apiKey,
             projectName });
         try {
@@ -81,13 +88,37 @@ const Signup = () => {
                 body: JSON.stringify(payload),
             });
             const result = yield response.json();
-            console.log('Signup successful:', result);
-            navigate("/signin");
+            setIsOtpSent(true);
+            console.log('OTP sent:', result);
         }
         catch (error) {
             console.error('Signup failed:', error);
         }
+        finally {
+            setIsSubmitting(false); // Set isSubmitting to false when the request is done
+        }
     });
-    return ((0, jsx_runtime_1.jsx)("div", { className: "flex items-center justify-center min-h-screen bg-gray-100", children: (0, jsx_runtime_1.jsxs)("div", { className: "bg-white p-8 rounded-lg shadow-lg w-full max-w-sm", children: [(0, jsx_runtime_1.jsx)("h1", { className: "text-2xl font-bold mb-6 text-center", children: "Signup" }), isLoading ? ((0, jsx_runtime_1.jsxs)("div", { className: "animate-pulse", children: [(0, jsx_runtime_1.jsx)("div", { className: "h-6 bg-gray-200 rounded mb-4" }), (0, jsx_runtime_1.jsx)("div", { className: "h-6 bg-gray-200 rounded mb-4" }), (0, jsx_runtime_1.jsx)("div", { className: "h-10 bg-gray-200 rounded mb-6" })] })) : (formType && ((0, jsx_runtime_1.jsxs)("form", { onSubmit: handleSubmit, children: [formType === 'EMAIL_USERNAME_PASSWORD' && ((0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsxs)("div", { className: "mb-4", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "username", className: "block text-sm font-medium text-gray-700", children: "Username" }), (0, jsx_runtime_1.jsx)("input", { type: "text", id: "username", name: "username", value: formData.username, onChange: handleChange, className: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm", required: true })] }), (0, jsx_runtime_1.jsxs)("div", { className: "mb-4", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "email", className: "block text-sm font-medium text-gray-700", children: "Email" }), (0, jsx_runtime_1.jsx)("input", { type: "email", id: "email", name: "email", value: formData.email, onChange: handleChange, className: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm", required: true })] }), (0, jsx_runtime_1.jsxs)("div", { className: "mb-6", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "password", className: "block text-sm font-medium text-gray-700", children: "Password" }), (0, jsx_runtime_1.jsx)("input", { type: "password", id: "password", name: "password", value: formData.password, onChange: handleChange, className: `mt-1 block w-full px-3 py-2 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${passwordErrors.length > 0 ? 'border-red-500' : 'border-gray-300'}`, required: true }), (0, jsx_runtime_1.jsx)("ul", { className: "mt-2 text-xs text-red-500", children: passwordErrors.map((error, index) => ((0, jsx_runtime_1.jsx)("li", { children: error }, index))) }), isPasswordStrong && ((0, jsx_runtime_1.jsx)("p", { className: "mt-2 text-green-500 text-xs", children: "Your account has a strong password." }))] })] })), formType === 'EMAIL_PASSWORD' && ((0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsxs)("div", { className: "mb-4", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "email", className: "block text-sm font-medium text-gray-700", children: "Email" }), (0, jsx_runtime_1.jsx)("input", { type: "email", id: "email", name: "email", value: formData.email, onChange: handleChange, className: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm", required: true })] }), (0, jsx_runtime_1.jsxs)("div", { className: "mb-6", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "password", className: "block text-sm font-medium text-gray-700", children: "Password" }), (0, jsx_runtime_1.jsx)("input", { type: "password", id: "password", name: "password", value: formData.password, onChange: handleChange, className: `mt-1 block w-full px-3 py-2 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${passwordErrors.length > 0 ? 'border-red-500' : 'border-gray-300'}`, required: true }), (0, jsx_runtime_1.jsx)("ul", { className: "mt-2 text-xs text-red-500", children: passwordErrors.map((error, index) => ((0, jsx_runtime_1.jsx)("li", { children: error }, index))) }), isPasswordStrong && ((0, jsx_runtime_1.jsx)("p", { className: "mt-2 text-green-500 text-xs", children: "Your account has a strong password." }))] })] })), (0, jsx_runtime_1.jsx)("button", { type: "submit", disabled: !isPasswordStrong, className: `w-full py-2 px-4 rounded-lg focus:outline-none ${!isPasswordStrong ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`, children: "Signup" })] }))), (0, jsx_runtime_1.jsxs)("p", { className: "mt-4 text-center text-sm text-gray-600", children: ["Already have an account? ", (0, jsx_runtime_1.jsx)(react_router_dom_1.Link, { to: "/signin", className: "text-indigo-600 hover:underline", children: "Signin" })] })] }) }));
+    const handleOtpSubmit = (e) => __awaiter(void 0, void 0, void 0, function* () {
+        e.preventDefault();
+        const payload = Object.assign(Object.assign({}, formData), { otp,
+            apiKey,
+            projectName });
+        try {
+            const response = yield fetch('http://localhost:3000/client/Auth/verifyotp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+            const result = yield response.json();
+            console.log('OTP verification successful:', result);
+            navigate("/signin");
+        }
+        catch (error) {
+            console.error('OTP verification failed:', error);
+        }
+    });
+    return ((0, jsx_runtime_1.jsx)("div", { className: "flex items-center justify-center min-h-screen bg-gray-100", children: (0, jsx_runtime_1.jsxs)("div", { className: "bg-white p-8 rounded-lg shadow-lg w-full max-w-sm", children: [(0, jsx_runtime_1.jsx)("h1", { className: "text-2xl font-bold mb-6 text-center", children: "Signup" }), isLoading ? ((0, jsx_runtime_1.jsxs)("div", { className: "animate-pulse", children: [(0, jsx_runtime_1.jsx)("div", { className: "h-6 bg-gray-200 rounded mb-4" }), (0, jsx_runtime_1.jsx)("div", { className: "h-6 bg-gray-200 rounded mb-4" }), (0, jsx_runtime_1.jsx)("div", { className: "h-10 bg-gray-200 rounded mb-6" })] })) : (formType && !isOtpSent && ((0, jsx_runtime_1.jsxs)("form", { onSubmit: handleSubmit, children: [formType === 'EMAIL_USERNAME_PASSWORD' && ((0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsxs)("div", { className: "mb-4", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "username", className: "block text-sm font-medium text-gray-700", children: "Username" }), (0, jsx_runtime_1.jsx)("input", { type: "text", id: "username", name: "username", value: formData.username, onChange: handleChange, className: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm", required: true })] }), (0, jsx_runtime_1.jsxs)("div", { className: "mb-4", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "email", className: "block text-sm font-medium text-gray-700", children: "Email" }), (0, jsx_runtime_1.jsx)("input", { type: "email", id: "email", name: "email", value: formData.email, onChange: handleChange, className: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm", required: true })] }), (0, jsx_runtime_1.jsxs)("div", { className: "mb-6", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "password", className: "block text-sm font-medium text-gray-700", children: "Password" }), (0, jsx_runtime_1.jsx)("input", { type: "password", id: "password", name: "password", value: formData.password, onChange: handleChange, className: `mt-1 block w-full px-3 py-2 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${passwordErrors.length > 0 ? 'border-red-500' : 'border-gray-300'}`, required: true }), (0, jsx_runtime_1.jsx)("ul", { className: "mt-2 text-xs text-red-500", children: passwordErrors.map((error, index) => ((0, jsx_runtime_1.jsx)("li", { children: error }, index))) }), isPasswordStrong && ((0, jsx_runtime_1.jsx)("p", { className: "mt-2 text-green-500 text-xs", children: "Your account has a strong password." }))] })] })), formType === 'EMAIL_PASSWORD' && ((0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsxs)("div", { className: "mb-4", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "email", className: "block text-sm font-medium text-gray-700", children: "Email" }), (0, jsx_runtime_1.jsx)("input", { type: "email", id: "email", name: "email", value: formData.email, onChange: handleChange, className: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm", required: true })] }), (0, jsx_runtime_1.jsxs)("div", { className: "mb-6", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "password", className: "block text-sm font-medium text-gray-700", children: "Password" }), (0, jsx_runtime_1.jsx)("input", { type: "password", id: "password", name: "password", value: formData.password, onChange: handleChange, className: `mt-1 block w-full px-3 py-2 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${passwordErrors.length > 0 ? 'border-red-500' : 'border-gray-300'}`, required: true }), (0, jsx_runtime_1.jsx)("ul", { className: "mt-2 text-xs text-red-500", children: passwordErrors.map((error, index) => ((0, jsx_runtime_1.jsx)("li", { children: error }, index))) }), isPasswordStrong && ((0, jsx_runtime_1.jsx)("p", { className: "mt-2 text-green-500 text-xs", children: "Your account has a strong password." }))] })] })), (0, jsx_runtime_1.jsx)("button", { type: "submit", disabled: !isPasswordStrong || isSubmitting, className: `w-full py-2 px-4 rounded-lg focus:outline-none ${!isPasswordStrong || isSubmitting ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`, children: isSubmitting ? 'Sending OTP...' : 'Signup' })] }))), isOtpSent && ((0, jsx_runtime_1.jsxs)("form", { onSubmit: handleOtpSubmit, children: [(0, jsx_runtime_1.jsxs)("div", { className: "mb-4", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "otp", className: "block text-sm font-medium text-gray-700", children: "Enter OTP" }), (0, jsx_runtime_1.jsx)("input", { type: "text", id: "otp", name: "otp", value: otp, onChange: handleOtpChange, className: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm", required: true })] }), (0, jsx_runtime_1.jsx)("button", { type: "submit", className: "w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg focus:outline-none", children: "Verify OTP" })] })), (0, jsx_runtime_1.jsxs)("p", { className: "mt-4 text-center text-sm text-gray-600", children: ["Already have an account? ", (0, jsx_runtime_1.jsx)(react_router_dom_1.Link, { to: "/signin", className: "text-indigo-600 hover:underline", children: "Signin" })] })] }) }));
 };
 exports.default = Signup;

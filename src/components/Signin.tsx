@@ -66,6 +66,9 @@ const Signin: React.FC<SignInProps> = ({ redirectPath = '/dashboard' }) => {
         body: JSON.stringify(payload),
       });
       const result = await response.json();
+      if(response.status === 401){
+        setErrorMessage(result.message);
+      }
       if (response.ok) {
         signIn(result.data.user);
         navigate(redirectPath);
@@ -73,7 +76,7 @@ const Signin: React.FC<SignInProps> = ({ redirectPath = '/dashboard' }) => {
         setErrorMessage(result.message);
       }
     } catch (error) {
-      console.error('Signin failed:', error);
+      console.error('Signi failed:', error);
       setErrorMessage('An error occurred. Please try again.');
     }
   };
