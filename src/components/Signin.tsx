@@ -11,12 +11,12 @@ const Signin: React.FC<SignInProps> = ({ redirectPath = '/dashboard' }) => {
   const [formType, setFormType] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const apiKey = process.env.REACT_APP_DOMAIN_KEY;
-  const projectName = process.env.REACT_APP_FORM_TYPE_KEY;
+  const [formValid, setFormValid] = useState(false); // State to track form validity
+  const apiKey = process.env.REACT_APP_DOMAIN_KEY || '';
+  const projectName = process.env.REACT_APP_FORM_TYPE_KEY || '';
   const navigate = useNavigate();
-  const {signIn} = useAuth();
+  const { signIn } = useAuth();
 
- 
   useEffect(() => {
     const fetchFormType = async () => {
       try {
@@ -38,6 +38,12 @@ const Signin: React.FC<SignInProps> = ({ redirectPath = '/dashboard' }) => {
     };
     fetchFormType();
   }, [projectName, apiKey]);
+
+  useEffect(() => {
+    // Validate form whenever formData changes
+    const isFormValid = formData.email !== '' && formData.password !== '';
+    setFormValid(isFormValid);
+  }, [formData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,7 +72,7 @@ const Signin: React.FC<SignInProps> = ({ redirectPath = '/dashboard' }) => {
         body: JSON.stringify(payload),
       });
       const result = await response.json();
-      if(response.status === 401){
+      if (response.status === 401) {
         setErrorMessage(result.message);
       }
       if (response.ok) {
@@ -76,7 +82,7 @@ const Signin: React.FC<SignInProps> = ({ redirectPath = '/dashboard' }) => {
         setErrorMessage(result.message);
       }
     } catch (error) {
-      console.error('Signi failed:', error);
+      console.error('Signin failed:', error);
       setErrorMessage('An error occurred. Please try again.');
     }
   };
@@ -143,7 +149,8 @@ const Signin: React.FC<SignInProps> = ({ redirectPath = '/dashboard' }) => {
               )}
               <button
                 type="submit"
-                className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg focus:outline-none"
+                className={`w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg focus:outline-none ${!formValid && 'cursor-not-allowed opacity-50'}`}
+                disabled={!formValid}
               >
                 Signin
               </button>
