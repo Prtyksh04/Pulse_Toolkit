@@ -1,34 +1,35 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+import React, { createContext, useContext, useState } from 'react';
+const setCookie = (name, value, days) => {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useAuth = exports.AuthProvider = void 0;
-const jsx_runtime_1 = require("react/jsx-runtime");
-const react_1 = require("react");
-const js_cookie_1 = __importDefault(require("js-cookie"));
-const AuthContext = (0, react_1.createContext)(undefined);
-const AuthProvider = ({ children }) => {
-    const [user, setUser] = (0, react_1.useState)(() => {
-        const userCookie = js_cookie_1.default.get('user');
+const getCookie = (name) => {
+    const value = document.cookie.split('; ').find(row => row.startsWith(name))?.split('=')[1];
+    return value ? decodeURIComponent(value) : null;
+};
+const deleteCookie = (name) => {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+};
+const AuthContext = createContext(undefined);
+export const AuthProvider = ({ children }) => {
+    const [user, setUser] = useState(() => {
+        const userCookie = getCookie('user');
         return userCookie ? JSON.parse(userCookie) : null;
     });
     const signIn = (userData) => {
-        js_cookie_1.default.set('user', JSON.stringify(userData));
+        setCookie('user', JSON.stringify(userData), 7); // Cookie expires in 7 days
         setUser(userData);
     };
     const signOut = () => {
-        js_cookie_1.default.remove('user');
+        deleteCookie('user');
         setUser(null);
     };
-    return ((0, jsx_runtime_1.jsx)(AuthContext.Provider, { value: { user, signIn, signOut }, children: children }));
+    return (React.createElement(AuthContext.Provider, { value: { user, signIn, signOut } }, children));
 };
-exports.AuthProvider = AuthProvider;
-const useAuth = () => {
-    const context = (0, react_1.useContext)(AuthContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
     if (!context) {
         throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
 };
-exports.useAuth = useAuth;

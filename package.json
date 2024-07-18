@@ -1,6 +1,6 @@
 {
   "name": "pulseauthtoolkit",
-  "version": "4.0.9",
+  "version": "5.0.7",
   "description": "Toolkit for authentication components with Tailwind CSS styles.",
   "main": "dist/index.js",
   "files": [
@@ -9,19 +9,20 @@
   ],
   "exports": {
     ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.js",
-      "style": "./src/index.css"
+      "default": "./dist/index.js"
     },
-    "./dist/index.css": "./src/index.css",
-    "./dist/components/Signin": {
+    "./components/Signin": {
       "import": "./dist/components/Signin/index.js",
-      "require": "./dist/components/Signin"
+      "require": "./dist/components/Signin/index.js"
     },
-    "./dist/components/Signup": {
+    "./components/Signup": {
       "import": "./dist/components/Signup/index.js",
-      "require": "./dist/components/Signup"
-    }
+      "require": "./dist/components/Signup/index.js"
+    },
+    "./style": "./dist/index.css"
   },
   "scripts": {
     "clean": "rimraf dist",

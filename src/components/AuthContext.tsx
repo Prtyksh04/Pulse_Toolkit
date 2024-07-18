@@ -1,5 +1,17 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+const setCookie = (name: string, value: string, days: number) => {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+};
+
+const getCookie = (name: string) => {
+  const value = document.cookie.split('; ').find(row => row.startsWith(name))?.split('=')[1];
+  return value ? decodeURIComponent(value) : null;
+};
+
+const deleteCookie = (name: string) => {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+};
 
 interface AuthContextType {
   user: any;
@@ -11,17 +23,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<any>(() => {
-    const userCookie = Cookies.get('user');
+    const userCookie = getCookie('user');
     return userCookie ? JSON.parse(userCookie) : null;
   });
 
   const signIn = (userData: any) => {
-    Cookies.set('user', JSON.stringify(userData));
+    setCookie('user', JSON.stringify(userData), 7); // Cookie expires in 7 days
     setUser(userData);
   };
 
   const signOut = () => {
-    Cookies.remove('user');
+    deleteCookie('user');
     setUser(null);
   };
 
@@ -39,4 +51,3 @@ export const useAuth = () => {
   }
   return context;
 };
-

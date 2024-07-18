@@ -11,8 +11,8 @@ const Signup: React.FC = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerifingOtp , setIsVerifingOtp] = useState(false);
-  const apiKey = process.env.REACT_APP_DOMAIN_KEY;
-  const projectName = process.env.REACT_APP_FORM_TYPE_KEY;
+  const apiKey = import.meta.env.VITE_REACT_APP_DOMAIN_KEY;
+  const projectName = import.meta.env.VITE_REACT_APP_FORM_TYPE_KEY;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,7 +95,7 @@ const Signup: React.FC = () => {
     } catch (error) {
       console.error('Signup failed:', error);
     } finally {
-      setIsSubmitting(false); // Set isSubmitting to false when the request is done
+      setIsSubmitting(false);
     }
   };
 

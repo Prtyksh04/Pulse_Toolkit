@@ -11,9 +11,9 @@ const Signin: React.FC<SignInProps> = ({ redirectPath = '/dashboard' }) => {
   const [formType, setFormType] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [formValid, setFormValid] = useState(false); // State to track form validity
-  const apiKey = process.env.REACT_APP_DOMAIN_KEY || '';
-  const projectName = process.env.REACT_APP_FORM_TYPE_KEY || '';
+  const [formValid, setFormValid] = useState(false); 
+  const apiKey = import.meta.env.VITE_REACT_APP_DOMAIN_KEY || '';
+  const projectName = import.meta.env.VITE_REACT_APP_FORM_TYPE_KEY || '';
   const navigate = useNavigate();
   const { signIn } = useAuth();
 

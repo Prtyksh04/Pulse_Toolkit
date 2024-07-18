@@ -1,14 +1,17 @@
 {
-  "include": ["src"],
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
-    "declaration": true,
-    "outDir": "dist",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
     "skipLibCheck": true,
-    "jsx": "react-jsx" 
-  }
+    "strict": true,
+    "declaration": true,
+    "declarationDir": "./dist",
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src"]
 }
